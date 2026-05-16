@@ -5,6 +5,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.refuge.ui.screens.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AppNavigation() {
@@ -31,13 +33,22 @@ fun AppNavigation() {
         // Autenticación
         composable("login") {
             LoginScreen(
+                viewModel = hiltViewModel(), // Inyección limpia mediante Hilt
                 onBackClick = { navController.popBackStack() },
-                onRegisterClick = { navController.navigate("register") }
+                onRegisterClick = { navController.navigate("register") },
+                onLoginSuccess = {
+                    // Al iniciar sesión de manera exitosa, lo mandamos al listado de mascotas
+                    navController.navigate("pets") {
+                        // Limpiamos la pantalla de login de la pila de navegación para evitar retornos molestos
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             )
         }
 
         composable("register") {
             RegisterScreen(
+                viewModel = hiltViewModel(),
                 onBackClick = { navController.popBackStack() },
                 onLoginClick = { navController.navigate("login") }
             )
