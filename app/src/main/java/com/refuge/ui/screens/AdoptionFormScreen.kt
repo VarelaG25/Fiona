@@ -88,11 +88,34 @@ fun AdoptionFormScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                // AVISO SI NO ESTÁ LOGEADO
+                if (userId == null) {
+
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFF3CD)
+                        ),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "Necesitas iniciar sesión para adoptar un perrito 🐶",
+                            modifier = Modifier.padding(16.dp),
+                            color = Color(0xFF856404),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = checked,
-                        onCheckedChange = { checked = it }
+                        onCheckedChange = { checked = it },
+                        enabled = userId != null
                     )
+
                     Text("I agree to the adoption terms and conditions")
                 }
 
@@ -101,6 +124,8 @@ fun AdoptionFormScreen(
                 Button(
                     onClick = {
 
+                        Log.d("ADOPTION_FORM", "USER: $userId PET: $petId")
+
                         val uid = userId
                         val pid = petId
 
@@ -108,7 +133,6 @@ fun AdoptionFormScreen(
                             petViewModel.adoptPet(uid, pid)
                             onNavigateToSuccess()
                         }
-
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -117,7 +141,7 @@ fun AdoptionFormScreen(
                         containerColor = Color(0xFFFFD700)
                     ),
                     shape = RoundedCornerShape(16.dp),
-                    enabled = checked
+                    enabled = checked && userId != null
                 ) {
                     Text(
                         "Submit Application",
