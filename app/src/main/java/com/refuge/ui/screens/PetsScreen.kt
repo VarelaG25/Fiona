@@ -26,6 +26,7 @@ import com.refuge.presentation.viewmodel.PetViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.refuge.presentation.session.PetSessionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +39,7 @@ fun PetsScreen(
     val viewModel: PetViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     val pets = state.pets.ifEmpty { emptyList() }
+    val session: PetSessionViewModel = hiltViewModel()
 
     Scaffold(
         topBar = {
@@ -92,10 +94,13 @@ fun PetsScreen(
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
 
+
                 items(pets) { pet ->
                     PetCard(
                         pet = pet,
-                        onClick = { onDogClick(pet.id) }
+                        onClick = {
+                                onDogClick(pet.id)
+                        }
                     )
                 }
             }

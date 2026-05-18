@@ -12,6 +12,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.refuge.data.session.SessionManager
+import com.refuge.presentation.session.PetSessionViewModel
+import com.refuge.presentation.viewmodel.PetDetailViewModel
 import com.refuge.presentation.viewmodel.ProfileViewModel
 import com.refuge.presentation.viewmodel.SessionViewModel
 import kotlinx.coroutines.launch
@@ -48,8 +50,8 @@ fun AppNavigation() {
                         launchSingleTop = true
                     }
                 },
-                onDogClick = {
-                    navController.navigate("pet_detail")
+                onDogClick = { id ->
+                    navController.navigate("pet_detail/$id")
                 }
             )
         }
@@ -80,26 +82,30 @@ fun AppNavigation() {
             )
         }
 
-        composable("pet_detail") {
+        composable("pet_detail/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+
             PetDetailScreen(
+                petId = id,
                 onBackClick = { navController.popBackStack() },
                 onProfileClick = {
                     if (isLogged) navController.navigate("profile")
                     else navController.navigate("login")
                 },
                 onAdoptClick = {
-                    navController.navigate("adoption_form")
+                    navController.navigate("adoption_form/$id")
                 }
             )
         }
 
-        composable("adoption_form") {
+        composable("adoption_form/{id}") { backStackEntry ->
+            val rawId = backStackEntry.arguments?.getString("id")
+            val id = rawId?.toIntOrNull()
             AdoptionFormScreen(
+                petId = id,
                 onBackClick = { navController.popBackStack() },
                 onNavigateToSuccess = {
-                    navController.navigate("adoption_success") {
-                        popUpTo("adoption_form") { inclusive = true }
-                    }
+                    navController.navigate("adoption_success")
                 }
             )
         }
