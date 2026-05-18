@@ -35,4 +35,12 @@ interface PetDao {
 
     @Insert
     suspend fun insertAll(pets: List<PetEntity>)
+
+    @Query("""
+    SELECT p.* 
+    FROM pets p
+    INNER JOIN adoptions a ON p.id = a.idPet
+    WHERE a.idUsuario = :userId
+""")
+    suspend fun getAdoptedPets(userId: Int): List<PetEntity>
 }

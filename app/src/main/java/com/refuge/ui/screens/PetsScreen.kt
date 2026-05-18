@@ -63,6 +63,7 @@ fun PetsScreen(
                         "home" -> onNavigate("home")
                         "profile" -> onNavigate("profile")
                         "login" -> onNavigate("login")
+                        "adopted" -> onNavigate("adopted")
                     }
                 }
             )

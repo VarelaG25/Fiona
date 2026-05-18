@@ -30,7 +30,7 @@ import com.refuge.ui.components.BottomNavigationBar
 @Composable
 fun PetDetailScreen(
     onBackClick: () -> Unit,
-    onProfileClick: () -> Unit,
+    onNavigate: (String) -> Unit,
     onAdoptClick: () -> Unit,
     petId: Int?
 ) {
@@ -69,7 +69,13 @@ fun PetDetailScreen(
                 currentRoute = "pets",
                 isLoggedIn = false,
                 onItemClick = { route ->
-                    if (route == "profile") onProfileClick()
+                    when (route) {
+                        "pets" -> onNavigate("pets")
+                        "home" -> onNavigate("home")
+                        "profile" -> {}
+                        "login" -> onNavigate("login")
+                        "adopted" -> onNavigate("adopted")
+                    }
                 }
             )
         }

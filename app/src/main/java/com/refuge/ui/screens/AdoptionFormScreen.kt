@@ -101,8 +101,6 @@ fun AdoptionFormScreen(
                 Button(
                     onClick = {
 
-                        Log.d("ADOPTION_FORM", "USER: $userId PET: $petId")
-
                         val uid = userId
                         val pid = petId
 

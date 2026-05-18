@@ -37,6 +37,7 @@ fun ProfileScreen(
                         "home" -> onNavigate("home")
                         "profile" -> {}
                         "login" -> onNavigate("login")
+                        "adopted" -> onNavigate("adopted")
                     }
                 }
             )

@@ -36,6 +36,7 @@ fun HomeScreen(
                         "pets" -> onNavigate("pets")
                         "profile" -> onNavigate("profile")
                         "login" -> onNavigate("login")
+                        "adopted" -> onNavigate("adopted")
                     }
                 }
             )

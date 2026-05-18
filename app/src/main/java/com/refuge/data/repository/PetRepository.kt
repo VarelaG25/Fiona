@@ -49,4 +49,8 @@ class PetRepository @Inject constructor(
             petDao.insertAll(dummies)
         }
     }
+
+    suspend fun getAdoptedPets(userId: Int): List<PetEntity> {
+        return petDao.getAdoptedPets(userId)
+    }
 }

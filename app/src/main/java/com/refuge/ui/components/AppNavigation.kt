@@ -33,11 +33,7 @@ fun AppNavigation() {
         composable("home") {
             HomeScreen(
                 isLoggedIn = isLogged,
-                onNavigate = { route ->
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                    }
-                }
+                onNavigate = { navController.navigate(it) },
             )
         }
 
@@ -45,11 +41,7 @@ fun AppNavigation() {
             PetsScreen(
                 isLoggedIn = isLogged,
                 onBackClick = { navController.popBackStack() },
-                onNavigate = { route ->
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                    }
-                },
+                onNavigate = { navController.navigate(it) },
                 onDogClick = { id ->
                     navController.navigate("pet_detail/$id")
                 }
@@ -82,16 +74,23 @@ fun AppNavigation() {
             )
         }
 
+        composable("adopted") {
+            MyAdoptedPetsScreen(
+                onBackClick = { navController.popBackStack() },
+                onPetClick = { id ->
+                    navController.navigate("pet_detail/$id")
+                },
+                onNavigate = { navController.navigate(it) }
+            )
+        }
+
         composable("pet_detail/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
 
             PetDetailScreen(
                 petId = id,
                 onBackClick = { navController.popBackStack() },
-                onProfileClick = {
-                    if (isLogged) navController.navigate("profile")
-                    else navController.navigate("login")
-                },
+                onNavigate = { navController.navigate(it) },
                 onAdoptClick = {
                     navController.navigate("adoption_form/$id")
                 }

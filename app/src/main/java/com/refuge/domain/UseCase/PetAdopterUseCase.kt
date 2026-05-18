@@ -40,4 +40,8 @@ class PetAdopterUseCase @Inject constructor(
     suspend fun seedPetsIfNeeded() {
         repository.seedPetsIfEmpty(PetsDummy.pets)
     }
+
+    suspend fun getAdoptedPets(userId: Int): List<PetEntity> {
+        return repository.getAdoptedPets(userId)
+    }
 }

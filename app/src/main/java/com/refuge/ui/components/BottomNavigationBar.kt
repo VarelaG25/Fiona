@@ -38,6 +38,13 @@ fun BottomNavigationBar(
         )
 
         NavigationBarItem(
+            selected = currentRoute == "adopted",
+            onClick = { onItemClick("adopted") },
+            icon = { Icon(Icons.Default.Pets, null) },
+            label = { Text("Adopted") }
+        )
+
+        NavigationBarItem(
             selected = currentRoute == "profile",
             onClick = {
                 if (isLoggedIn) onItemClick("profile")
