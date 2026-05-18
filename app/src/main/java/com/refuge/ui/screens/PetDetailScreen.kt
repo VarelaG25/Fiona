@@ -36,7 +36,13 @@ fun PetDetailScreen(
             )
         },
         bottomBar = {
-            BottomNavigationBar(currentRoute = "pets", onItemClick = { if (it == "profile") onProfileClick() })
+            BottomNavigationBar(
+                currentRoute = "pets",
+                isLoggedIn = false,
+                onItemClick = { route ->
+                    if (route == "profile") onProfileClick()
+                }
+            )
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues).verticalScroll(rememberScrollState()).padding(24.dp)) {

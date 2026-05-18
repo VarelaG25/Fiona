@@ -14,35 +14,36 @@ val PrimaryYellow = Color(0xFFFFD700)
 
 @Composable
 fun BottomNavigationBar(
-    currentRoute: String = "pets",
-    onItemClick: (String) -> Unit = {}
+    currentRoute: String?,
+    isLoggedIn: Boolean,
+    onItemClick: (String) -> Unit
 ) {
     NavigationBar(
         containerColor = Color.White,
         tonalElevation = 8.dp
     ) {
+
         NavigationBarItem(
             selected = currentRoute == "home",
             onClick = { onItemClick("home") },
-            icon = { Icon(Icons.Outlined.Home, contentDescription = "Home") },
+            icon = { Icon(Icons.Outlined.Home, null) },
             label = { Text("Home") }
         )
+
         NavigationBarItem(
             selected = currentRoute == "pets",
             onClick = { onItemClick("pets") },
-            icon = { Icon(Icons.Default.Pets, "Pets") },
+            icon = { Icon(Icons.Default.Pets, null) },
             label = { Text("Pets") }
         )
-        NavigationBarItem(
-            selected = currentRoute == "favorites",
-            onClick = { onItemClick("favorites") },
-            icon = { Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Favorites") },
-            label = { Text("Favorites") }
-        )
+
         NavigationBarItem(
             selected = currentRoute == "profile",
-            onClick = { onItemClick("profile") },
-            icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile") },
+            onClick = {
+                if (isLoggedIn) onItemClick("profile")
+                else onItemClick("login")
+            },
+            icon = { Icon(Icons.Outlined.Person, null) },
             label = { Text("Profile") }
         )
     }

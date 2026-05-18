@@ -22,16 +22,20 @@ import androidx.compose.ui.unit.sp
 val PrimaryYellow = Color(0xFFFFD700)
 
 @Composable
-fun HomeScreen(onNavigateToLogin: () -> Unit,
-               onNavigateToPets: () -> Unit) {
+fun HomeScreen(
+    onNavigate: (String) -> Unit,
+    isLoggedIn: Boolean
+){
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
                 currentRoute = "home",
+                isLoggedIn = isLoggedIn,
                 onItemClick = { route ->
                     when (route) {
-                        "profile" -> onNavigateToLogin()
-                        "pets" -> onNavigateToPets()
+                        "pets" -> onNavigate("pets")
+                        "profile" -> onNavigate("profile")
+                        "login" -> onNavigate("login")
                     }
                 }
             )

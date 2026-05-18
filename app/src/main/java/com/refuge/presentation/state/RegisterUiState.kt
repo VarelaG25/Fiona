@@ -5,6 +5,7 @@ data class RegisterUiState(
     val email: String = "",
     val phone: String = "",
     val password: String = "",
-    val message: String? = null,
-    val loading: Boolean = false
+    val isLoading: Boolean = false,
+    val isSuccess: Boolean = false,
+    val message: String? = null
 )

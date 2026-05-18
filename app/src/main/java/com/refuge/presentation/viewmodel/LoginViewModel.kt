@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.refuge.data.session.SessionManager
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: UsuarioRepository
+    private val repository: UsuarioRepository,
+    private val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())
@@ -48,6 +50,12 @@ class LoginViewModel @Inject constructor(
             } else if (user.password != password) {
                 _state.update { it.copy(isLoading = false, errorMessage = "Contraseña incorrecta.") }
             } else {
+                sessionManager.saveSession(
+                    user.id,
+                    user.fullName,
+                    user.email
+                )
+
                 _state.update {
                     it.copy(
                         isLoading = false,

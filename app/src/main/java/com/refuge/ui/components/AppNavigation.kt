@@ -1,45 +1,71 @@
 package com.refuge.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.refuge.ui.screens.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.refuge.data.session.SessionManager
+import com.refuge.presentation.viewmodel.ProfileViewModel
+import com.refuge.presentation.viewmodel.SessionViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppNavigation() {
-    val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "home") {
-        // Pantalla de Inicio
+    val navController = rememberNavController()
+    val sessionViewModel: SessionViewModel = hiltViewModel()
+    val isLogged by sessionViewModel.isLogged.collectAsState(initial = false)
+
+    NavHost(
+        navController = navController,
+        startDestination = "home"
+    ) {
+
         composable("home") {
             HomeScreen(
-                onNavigateToLogin = { navController.navigate("login") },
-                onNavigateToPets = { navController.navigate("pets") }
+                isLoggedIn = isLogged,
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
-        // Listado de Perros
         composable("pets") {
             PetsScreen(
+                isLoggedIn = isLogged,
                 onBackClick = { navController.popBackStack() },
-                onProfileClick = { navController.navigate("login") },
-                onDogClick = { navController.navigate("pet_detail") } // Al clicar uno, va al detalle
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                    }
+                },
+                onDogClick = {
+                    navController.navigate("pet_detail")
+                }
             )
         }
 
-        // Autenticación
         composable("login") {
             LoginScreen(
-                viewModel = hiltViewModel(), // Inyección limpia mediante Hilt
-                onBackClick = { navController.popBackStack() },
+                viewModel = hiltViewModel(),
+                onBackClick = {
+                    navController.navigate("home") {
+                        popUpTo("home") { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
                 onRegisterClick = { navController.navigate("register") },
                 onLoginSuccess = {
-                    // Al iniciar sesión de manera exitosa, lo mandamos al listado de mascotas
-                    navController.navigate("pets") {
-                        // Limpiamos la pantalla de login de la pila de navegación para evitar retornos molestos
+                    navController.navigate("profile") {
                         popUpTo("login") { inclusive = true }
                     }
                 }
@@ -57,8 +83,13 @@ fun AppNavigation() {
         composable("pet_detail") {
             PetDetailScreen(
                 onBackClick = { navController.popBackStack() },
-                onProfileClick = { navController.navigate("login") },
-                onAdoptClick = { navController.navigate("adoption_form") } // <--- ESTO CONECTA LAS PANTALLAS
+                onProfileClick = {
+                    if (isLogged) navController.navigate("profile")
+                    else navController.navigate("login")
+                },
+                onAdoptClick = {
+                    navController.navigate("adoption_form")
+                }
             )
         }
 
@@ -67,7 +98,6 @@ fun AppNavigation() {
                 onBackClick = { navController.popBackStack() },
                 onNavigateToSuccess = {
                     navController.navigate("adoption_success") {
-                        // Esto borra el formulario del historial para que no pueda volver atrás
                         popUpTo("adoption_form") { inclusive = true }
                     }
                 }
@@ -76,8 +106,24 @@ fun AppNavigation() {
 
         composable("adoption_success") {
             AdoptionSuccessScreen(
-                onBackToHome = { navController.navigate("home") },
-                onViewApplications = { /* ... */ }
+                onBackToHome = { navController.navigate("home") }
+            )
+        }
+
+        composable("profile") {
+            ProfileScreen(
+                viewModel = hiltViewModel(),
+                isLoggedIn = isLogged,
+                onNavigate = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                    }
+                },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo(0)
+                    }
+                }
             )
         }
     }
