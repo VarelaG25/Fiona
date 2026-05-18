@@ -3,6 +3,7 @@ package com.refuge.di
 import android.content.Context
 import androidx.room.Room
 import com.refuge.data.local.AppDatabase
+import com.refuge.data.local.dao.PetDao
 import com.refuge.data.local.dao.UsuarioDao
 import dagger.Module
 import dagger.Provides
@@ -23,15 +24,16 @@ object DatabaseModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "refuge_database" // Este será el nombre físico de tu archivo de base de datos
+            "refuge_database"
         )
-            // .fallbackToDestructiveMigration() // Opcional: Borra la BD si cambias la estructura en el futuro
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideUsuarioDao(db: AppDatabase): UsuarioDao {
-        return db.usuarioDao()
-    }
+    fun provideUsuarioDao(db: AppDatabase): UsuarioDao = db.usuarioDao()
+
+    @Provides
+    @Singleton
+    fun providePetDao(db: AppDatabase): PetDao = db.petDao()
 }

@@ -21,21 +21,32 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.refuge.data.local.entity.PetEntity
+import com.refuge.presentation.viewmodel.PetViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PetsScreen(
     onBackClick: () -> Unit,
-    onDogClick: () -> Unit,
+    onDogClick: (Int) -> Unit,
     onNavigate: (String) -> Unit,
     isLoggedIn: Boolean
 ) {
+    val viewModel: PetViewModel = hiltViewModel()
+    val state by viewModel.state.collectAsState()
+    val pets = state.pets.ifEmpty { emptyList() }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Nuestros Perritos", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = onBackClick
+                    ) {
                         Icon(Icons.Default.ArrowBack, null)
                     }
                 }
@@ -47,7 +58,6 @@ fun PetsScreen(
                 isLoggedIn = isLoggedIn,
                 onItemClick = { route ->
                     when (route) {
-                        "pets" -> {}
                         "home" -> onNavigate("home")
                         "profile" -> onNavigate("profile")
                         "login" -> onNavigate("login")
@@ -81,10 +91,12 @@ fun PetsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
-                val dogs = listOf("Luna", "Max", "Bella", "Rocky", "Copo", "Daisy")
 
-                items(dogs) { name ->
-                    PetCard(name = name, onClick = onDogClick)
+                items(pets) { pet ->
+                    PetCard(
+                        pet = pet,
+                        onClick = { onDogClick(pet.id) }
+                    )
                 }
             }
         }
@@ -92,7 +104,10 @@ fun PetsScreen(
 }
 
 @Composable
-fun PetCard(name: String, onClick: () -> Unit) {
+fun PetCard(
+    pet: PetEntity,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,7 +120,7 @@ fun PetCard(name: String, onClick: () -> Unit) {
 
             Image(
                 painter = painterResource(id = R.drawable.dog),
-                contentDescription = name,
+                contentDescription = pet.nombre,
                 modifier = Modifier
                     .height(140.dp)
                     .fillMaxWidth(),
@@ -115,10 +130,17 @@ fun PetCard(name: String, onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = name,
+                text = pet.nombre,
                 modifier = Modifier.padding(12.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
+            )
+
+            Text(
+                text = "${pet.raza} • ${pet.edad} años",
+                modifier = Modifier.padding(horizontal = 12.dp),
+                fontSize = 12.sp,
+                color = Color.Gray
             )
         }
     }
